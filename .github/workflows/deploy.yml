@@ -20,7 +20,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_KEY }}
         script: |
-          cd /home/ubuntu
+          cd /home/ubuntu/flask_aws_demo
           git pull origin master
           pip install -r requirements.txt
           sudo systemctl restart flask-app
