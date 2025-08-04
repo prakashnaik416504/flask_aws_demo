@@ -1,4 +1,4 @@
-name: Deploy Flask App to AWS
+name: Deploy to EC2
 
 on:
   push:
@@ -13,20 +13,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v0.1.10
       with:
-        python-version: '3.12.1'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Deploy to AWS EC2
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-      run: |
-        echo "Deploy logic here (e.g., SSH into EC2 and restart app)"
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          cd /home/ubuntu
+          git pull origin master
+          pip install -r requirements.txt
+          sudo systemctl restart flask-app
